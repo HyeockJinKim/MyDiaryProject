@@ -1,7 +1,7 @@
 from django.db import models
+from django.utils import timezone
 
 
-# Create your models here.
 class WithMe(models.Model):
     name = models.CharField(max_length=10)
     description = models.TextField()
@@ -17,10 +17,16 @@ class Location(models.Model):
     description = models.TextField()
 
 
+class Tag(models.Model):
+    name = models.CharField(max_length=20)
+    description = models.TextField()
+
+
 class Diary(models.Model):
     title = models.CharField(max_length=50)
-    subject = models.ForeignKey(Subject, null=True, on_delete=models.SET_NULL)  # Null: 특별한 주제 없음
+    subject = models.ForeignKey(Subject, null=True, blank=True, on_delete=models.SET_NULL)  # Null: 특별한 주제 없음
     post = models.TextField()
-    location = models.ForeignKey(Location, null=True, on_delete=models.SET_NULL)  # Null: 알 수 없는 장소
-    with_me = models.ManyToManyField(WithMe)
-    created = models.DateTimeField(auto_now_add=True)
+    location = models.ForeignKey(Location, null=True, blank=True, on_delete=models.SET_NULL)  # Null: 알 수 없는 장소
+    with_me = models.ManyToManyField(WithMe, null=True, blank=True)
+    tags = models.ManyToManyField(Tag, null=True, blank=True)
+    date = models.DateField(default=timezone.now)
