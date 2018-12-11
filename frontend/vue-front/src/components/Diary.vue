@@ -4,48 +4,55 @@
         <div class="grid-two book">
             <div class="book-cover shadow-right">
                 <div class="book-page shadow-left flow-right vertical-middle">
-
                 </div>
             </div>
             <div class="book-cover shadow-left">
-                <div class="book-page shadow-right flow-left vertical-middle">
-                    <div class="book-header">
-                        <h2 class="title">일기 제목</h2>
-                    </div>
-                    <div class="book-content">
-                        <p>오늘 하루는 이렇게 일기에 시간을 쓰는구나</p>
-                    </div>
-                    <div class="book-footer">
-                        <div class="grid-two">
-                            <label class="sparse" v-for="(item, index) in footer" v-bind:key="'sing'+index">{{ item.head }}
-                                <select v-model="item.selected">
-                                    <option v-for="(value, index2) in item.data" v-bind:key="'sing2'+index2" v-bind:value="value">
-                                        {{ value }}
-                                    </option>
-                                </select>
-                                &nbsp;
-                                <span class="btn">등록</span>
-                            </label>
-                            <label class="sparse" v-for="(item, index) in tags" v-bind:key="'mul'+index">{{ item.head }}
-                                <span class="pointer tags" v-for="(value, index2) in item.data" v-bind:key="'mul2'+index2"
-                                      v-bind:class="{checked: value.selected}"
-                                      @click="value.selected = !value.selected">
+                <div class="book-page shadow-right flow-left vertical-middle cur" @click="next_page">
+                    <transition name="fade">
+                        <div v-if="show" class="book-header">
+                            <h2 class="title">일기 제목</h2>
+                        </div>
+                    </transition>
+                    <transition name="fade">
+                        <div v-if="show" class="book-content">
+                            <p>오늘 하루는 이렇게 일기에 시간을 쓰는구나</p>
+                        </div>
+                    </transition>
+                    <transition name="fade">
+                        <div v-if="show" class="book-footer">
+                            <div class="grid-two">
+                                <label class="sparse" v-for="(item, index) in footer" v-bind:key="'sing'+index">{{ item.head }}
+                                    <select v-model="item.selected">
+                                        <option v-for="(value, index2) in item.data" v-bind:key="'sing2'+index2" v-bind:value="value">
+                                            {{ value }}
+                                        </option>
+                                    </select>
+                                    &nbsp;
+                                    <span class="btn">등록</span>
+                                </label>
+                                <label class="sparse" v-for="(item, index) in tags" v-bind:key="'mul'+index">{{ item.head }}
+                                    <span class="pointer tags" v-for="(value, index2) in item.data" v-bind:key="'mul2'+index2"
+                                          v-bind:class="{checked: value.selected}"
+                                          @click="value.selected = !value.selected">
                                     {{ value.name }}
                                 </span>
-                                &nbsp;
-                                <span class="btn">등록</span>
-                                <br>
-                            </label>
+                                    &nbsp;
+                                    <span class="btn">등록</span>
+                                    <br>
+                                </label>
+                            </div>
                         </div>
-                    </div>
-                    <div class="flow-right grid-two margin-right pointer">
-                        <div>
-                            <img src="../assets/32_pen.png" align="left" alt="writing"/>
+                    </transition>
+                    <transition name="fade">
+                        <div v-if="show" class="flow-right grid-two margin-right pointer">
+                            <div>
+                                <img src="../assets/32_pen.png" align="left" alt="writing"/>
+                            </div>
+                            <div>
+                                <p>Writing</p>
+                            </div>
                         </div>
-                        <div>
-                            <p>Writing</p>
-                        </div>
-                    </div>
+                    </transition>
                 </div>
             </div>
         </div>
@@ -94,11 +101,15 @@
                             {name: '영어', selected: false},
                         ]
                     }
-                ]
+                ],
+                show: true
             }
         },
         methods: {
-
+            next_page: function () {
+                this.show = false
+                setTimeout(() => this.show = true, 1000)
+            }
         }
     }
 </script>
@@ -168,6 +179,7 @@ label {
     background-color: #1d4d7c;
     margin: 0;
     padding: 0;
+    z-index: 3;
 }
 
 .flow-right {
@@ -195,6 +207,14 @@ label {
     width: 35em;
     height: 50em;
     background-color: white;
+    z-index: 2;
+}
+
+.fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    opacity: 0;
 }
 
 .tags {
@@ -229,4 +249,5 @@ label {
 .checked {
     background-color: rgba(28, 83, 205, 0.82);
 }
+
 </style>
