@@ -3,12 +3,12 @@
         <div class="book-header">
             <!--<h2 class="title">{{ header }}</h2>-->
             <label>제목
-                <input class="header-content" type="text">
+                <input v-model="header" placeholder="일기 제목" class="header-content" type="text">
             </label>
         </div>
         <div class="book-content">
             <label>내용
-                <textarea class="content"></textarea>
+                <textarea v-model="contents" placeholder="내용" class="content"></textarea>
             </label>
         </div>
         <div class="book-footer">
@@ -34,7 +34,7 @@
                 </label>
             </div>
         </div>
-        <div class="flow-right grid-two margin-right pointer">
+        <div class="flow-right grid-two margin-right pointer" @click="submit">
             <div>
                 <img src="../assets/32_pen.png" align="left" alt="writing"/>
             </div>
@@ -46,11 +46,19 @@
 </template>
 
 <script>
+    import axios from 'axios'
+
     export default {
         name: "Edit",
+        created() {
+            axios.get('http://127.0.0.1:8000/')
+                .then()
+                .catch()
+            this.header = 'his'
+        },
         data: function () {
             return {
-                header: '일기 제목',
+                header: '',
                 contents: '',
                 footer: [
                     {
@@ -87,7 +95,30 @@
             }
         },
         methods: {
-
+            submit: function () {
+                let payload = {
+                    header: this.header,
+                    contents: this.contents
+                }
+                for (let i = 0; i < this.tags.length; ++i) {
+                    let tag = []
+                    for (let j = 0; j < this.tags[i].data.length; ++j) {
+                        if (this.tags[i].data[j].selected)
+                            tag.push(this.tags[i].data[j].name)
+                    }
+                    payload[this.tags[i].name] = tag
+                }
+                console.log(payload)
+                if (this.$route.params.id === undefined)
+                    axios.post('http://127.0.0.1:8000/diary/new', payload)
+                        .then(data => data.data)
+                        .then(data => {
+                            console.log(data)
+                        })
+                        .catch(err => {
+                            console.log(err)
+                        })
+            }
         }
     }
 </script>
