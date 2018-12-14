@@ -5,6 +5,7 @@ from django.core import serializers
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics
 
@@ -38,7 +39,8 @@ def tags(request):
         'location': json.loads(serializers.serialize('json', Location.objects.all())),
         'subject': json.loads(serializers.serialize('json', Subject.objects.all())),
         'with_me': json.loads(serializers.serialize('json', WithMe.objects.all())),
-        'tags': json.loads(serializers.serialize('json', Tag.objects.all()))
+        'tags': json.loads(serializers.serialize('json', Tag.objects.all())),
+        'date': timezone.now().date()
     }
     return JsonResponse(data)
 
@@ -46,23 +48,25 @@ def tags(request):
 @csrf_exempt
 def new(request):
     data = json.loads(request.body.decode('utf-8'))
-    # try:
-    #     diary = Diary.objects.create(
-    #         title=data['header'],
-    #         subject=Subject.objects.get(name=data['subject']),
-    #         post=data['content'],
-    #         location=Location.objects.get(name=data['location']),
-    #     )
-    # except:
-    #     return JsonResponse('create error')
-    # try:
-    #     for me in data['with_me']:
-    #         diary.with_me.add(WithMe.objects.get(name=me))
-    # except:
-    #     return JsonResponse('with me error')
-    # try:
-    #     for tag in data['tags']:
-    #         diary.tags.add(Tag.objects.get(name=tag))
-    # except:
-    #     return JsonResponse('tag error')
+    print(data)
+    try:
+        diary = Diary.objects.create(
+            title=data['header'],
+            subject=Subject.objects.get(name=data['subject']),
+            post=data['contents'],
+            location=Location.objects.get(name=data['location']),
+            date=data['date']
+        )
+    except:
+        return JsonResponse('create error')
+    try:
+        for me in data['with_me']:
+            diary.with_me.add(WithMe.objects.get(name=me))
+    except:
+        return JsonResponse('with me error')
+    try:
+        for tag in data['tags']:
+            diary.tags.add(Tag.objects.get(name=tag))
+    except:
+        return JsonResponse('tag error')
     return JsonResponse(data)

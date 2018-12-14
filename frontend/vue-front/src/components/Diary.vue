@@ -30,8 +30,9 @@ label {
     font-size: 0.9em;
 }
 
-.margin-right {
-    margin-right: 2em;
+.submit {
+    margin: 0 2em;
+
 }
 
 .pointer {
