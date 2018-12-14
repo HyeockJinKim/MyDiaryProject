@@ -45,6 +45,26 @@ def tags(request):
     return JsonResponse(data)
 
 
+def page(request, pk=-1):
+    try:
+        diary = Diary.objects.get(pk=pk)
+    except:
+        diary = Diary.objects.get(pk=Diary.objects.count())
+
+    data = json.loads(serializers.serialize('json', [diary, ]))[0]
+    data = data['fields']
+    data['subject'] = Subject.get_name(data['subject'])
+    data['location'] = Location.get_name(data['location'])
+
+    for i in range(len(data['with_me'])):
+        data['with_me'][i] = WithMe.get_name(data['with_me'][i])
+
+    for i in range(len(data['tags'])):
+        data['tags'][i] = Tag.get_name(data['tags'][i])
+
+    return JsonResponse(data)
+
+
 @csrf_exempt
 def new(request):
     data = json.loads(request.body.decode('utf-8'))

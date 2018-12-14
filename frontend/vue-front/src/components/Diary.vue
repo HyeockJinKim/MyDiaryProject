@@ -138,11 +138,6 @@ label {
     line-height: 2.2em;
 }
 
-.book-content {
-    margin: 0 1em;
-    height: 34em;
-}
-
 .book-footer {
     margin: 0 1.2em;
 }

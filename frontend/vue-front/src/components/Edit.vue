@@ -143,6 +143,7 @@ export default {
                     .catch(err => {
                         console.log(err)
                     })
+            this.$router.push('/diary/post/')
         }
     }
 }
@@ -153,8 +154,16 @@ export default {
     padding: 1em 2.5em 0 1.5em;
 }
 
+
+.submit {
+    margin: 0 2em;
+
+}
+
 .book-content {
     padding: 0.5em 1.5em 0.5em 0.5em;
+    margin: 0 1em;
+    height: 34em;
 }
 
 .header-content {
