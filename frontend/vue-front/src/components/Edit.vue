@@ -51,9 +51,33 @@
     export default {
         name: "Edit",
         created() {
-            axios.get('http://127.0.0.1:8000/')
-                .then()
-                .catch()
+            axios.get('http://127.0.0.1:8000/diary/tags')
+                .then(data => data.data)
+                .then(data => {
+                    for (let i = 0; i < data.location.length; ++i) {
+                        this.footer[0].data.push(data.location[i].fields.name)
+                    }
+                    this.footer[0].selected = data.location[0].fields.name
+                    for (let i = 0; i < data.subject.length; ++i) {
+                        this.footer[1].data.push(data.subject[i].fields.name)
+                    }
+                    this.footer[1].selected = data.subject[0].fields.name
+                    for (let i = 0; i < data.with_me.length; ++i) {
+                        this.tags[0].data.push({
+                            name: data.with_me[i].fields.name,
+                            selected: false
+                        })
+                    }
+                    for (let i = 0; i < data.tags.length; ++i) {
+                        this.tags[1].data.push({
+                            name: data.tags[i].fields.name,
+                            selected: false
+                        })
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                })
             this.header = 'his'
         },
         data: function () {
@@ -64,32 +88,26 @@
                     {
                         head: 'Location',
                         name: 'location',
-                        data: ['충대', '집'],
-                        selected: '충대'
+                        data: [],
+                        selected: ''
                     },
                     {
                         head: 'Subject',
                         name: 'Subject',
-                        data: ['토익스피킹', '랩실'],
-                        selected: '토익스피킹'
+                        data: [],
+                        selected: ''
                     }
                 ],
                 tags: [
                     {
                         head: 'with me',
                         name: 'with_me',
-                        data: [
-                            {name: '준후형', selected: false},
-                            {name: '민호형', selected: false},
-                        ]
+                        data: []
                     },
                     {
                         head: 'Tags',
                         name: 'Tags',
-                        data: [
-                            {name: '운영체제', selected: false},
-                            {name: '영어', selected: false},
-                        ]
+                        data: []
                     }
                 ]
             }
@@ -108,7 +126,6 @@
                     }
                     payload[this.tags[i].name] = tag
                 }
-                console.log(payload)
                 if (this.$route.params.id === undefined)
                     axios.post('http://127.0.0.1:8000/diary/new', payload)
                         .then(data => data.data)
@@ -143,7 +160,7 @@
     margin-top: 0.5em;
     margin-bottom: 0.8em;
     resize: none;
-    height: 90%;
+    height: 94%;
     width: 100%;
 }
 </style>

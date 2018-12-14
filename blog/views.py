@@ -1,6 +1,7 @@
 import json
 
 from django import forms
+from django.core import serializers
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -22,14 +23,24 @@ class DiaryListCreate(generics.ListCreateAPIView):
     serializer_class = DiarySerializer
 
 
-def edit(request):
-    if request.method == 'POST':
-        form = DiaryForm(request.POST)
-        if form.is_valid():
-            return redirect(reverse('index'))
+# def edit(request):
+#     if request.method == 'POST':
+#         form = DiaryForm(request.POST)
+#         if form.is_valid():
+#             return redirect(reverse('index'))
+#
+#     form = DiaryForm()
+#     return render(request, 'blog/edit_post.html', locals())
 
-    form = DiaryForm()
-    return render(request, 'blog/edit_post.html', locals())
+
+def tags(request):
+    data = {
+        'location': json.loads(serializers.serialize('json', Location.objects.all())),
+        'subject': json.loads(serializers.serialize('json', Subject.objects.all())),
+        'with_me': json.loads(serializers.serialize('json', WithMe.objects.all())),
+        'tags': json.loads(serializers.serialize('json', Tag.objects.all()))
+    }
+    return JsonResponse(data)
 
 
 @csrf_exempt

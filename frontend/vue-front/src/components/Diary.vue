@@ -31,7 +31,6 @@ label {
 }
 
 .margin-right {
-    margin-top: 0.8em;
     margin-right: 2em;
 }
 
@@ -134,11 +133,13 @@ label {
     border-radius: 8px;
     text-align: center;
     vertical-align: center;
+    word-break: keep-all;
+    line-height: 2.2em;
 }
 
 .book-content {
     margin: 0 1em;
-    height: 35em;
+    height: 34em;
 }
 
 .book-footer {
@@ -150,7 +151,7 @@ label {
 }
 
 .sparse {
-    margin: 1em;
+    margin: 0.5em;
 }
 
 .checked {
