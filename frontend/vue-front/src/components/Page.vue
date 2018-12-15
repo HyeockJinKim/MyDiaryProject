@@ -110,7 +110,7 @@ export default {
                         this.tags[3].data.push(data.tags[i])
                     }
                     this.date = data.date
-                    if (data.len === data.pk) {
+                    if (data.len === -1) {
                         this.next_page = {
                             name: 'new'
                         }

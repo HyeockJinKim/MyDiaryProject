@@ -50,7 +50,9 @@ def page(request, pk=-1):
     try:
         diary = Diary.objects.get(pk=pk)
     except:
-        diary = Diary.objects.get(pk=length)
+        diary = Diary.objects.last()
+        length = -1
+
     data = json.loads(serializers.serialize('json', [diary, ]))[0]
     pk = data['pk']
     data = data['fields']
