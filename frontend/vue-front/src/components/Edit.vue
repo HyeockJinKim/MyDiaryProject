@@ -108,16 +108,27 @@ export default {
                 }
                 payload[this.tags[i].name] = tag
             }
-            if (this.$route.params.id === undefined)
+            if (this.$route.params.id === undefined) {
                 axios.post('http://127.0.0.1:8000/diary/new', payload)
                     .then(data => data.data)
                     .then(data => {
                         console.log(data)
+                        this.$router.push('/diary/post/')
                     })
                     .catch(err => {
                         console.log(err)
                     })
-            this.$router.push('/diary/post/')
+            } else {
+                axios.post('http://127.0.0.1:8000/diary/edit/' + this.$route.params.id, payload)
+                    .then(data => data.data)
+                    .then(data => {
+                        console.log(data)
+                        this.$router.push('/diary/post/'+this.$route.params.id)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+            }
         },
         get_tags: function () {
             axios.get('http://127.0.0.1:8000/diary/tags')

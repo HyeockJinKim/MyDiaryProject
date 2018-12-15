@@ -24,16 +24,6 @@ class DiaryListCreate(generics.ListCreateAPIView):
     serializer_class = DiarySerializer
 
 
-# def edit(request):
-#     if request.method == 'POST':
-#         form = DiaryForm(request.POST)
-#         if form.is_valid():
-#             return redirect(reverse('index'))
-#
-#     form = DiaryForm()
-#     return render(request, 'blog/edit_post.html', locals())
-
-
 def tags(request):
     data = {
         'location': json.loads(serializers.serialize('json', Location.objects.all())),

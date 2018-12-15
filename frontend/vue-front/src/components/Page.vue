@@ -163,7 +163,8 @@ a {
 }
 
 .book-content {
-    margin: 0 1em;
+    margin: 0 2em 0 1em;
     height: 36em;
+    overflow-y: scroll;
 }
 </style>
