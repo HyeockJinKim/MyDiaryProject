@@ -59,6 +59,14 @@ def page(request, pk=-1):
     data['subject'] = Subject.get_name(data['subject'])
     data['location'] = Location.get_name(data['location'])
     data['pk'] = pk
+    try:
+        data['next'] = Diary.objects.filter(id__gt=pk).order_by('id').first().id
+    except:
+        pass
+    try:
+        data['prev'] = Diary.objects.filter(id__lt=pk).order_by('-id').first().id
+    except:
+        pass
     data['len'] = length
     for i in range(len(data['with_me'])):
         data['with_me'][i] = WithMe.get_name(data['with_me'][i])

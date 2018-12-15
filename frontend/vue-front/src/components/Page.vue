@@ -32,7 +32,7 @@
                     </div>
                 </router-link>
                 <h2 class="right-btn"><router-link :to="next_page">&gt;</router-link></h2>
-                <h2 class="left-btn"><router-link :to="{ name: 'post', params: { id: prev }}">&lt;</router-link></h2>
+                <h2 v-if="prev !== undefined" class="left-btn"><router-link :to="{ name: 'post', params: { id: prev }}">&lt;</router-link></h2>
 
             </div>
         </transition>
@@ -110,19 +110,20 @@ export default {
                         this.tags[3].data.push(data.tags[i])
                     }
                     this.date = data.date
-                    if (data.len === -1) {
+                    if (data.next === undefined) {
                         this.next_page = {
                             name: 'new'
-                        }
+                        };
+                        this.next = undefined
                         console.log('new')
                     } else {
-                        this.next = data.pk+1
+                        this.next = data.next
                         this.next_page = {
                             name: 'post',
                             params: { id: this.next }
                         }
                     }
-                    this.prev = data.pk-1
+                    this.prev = data.prev
                     this.show = true
                 })
                 .catch(err => {
