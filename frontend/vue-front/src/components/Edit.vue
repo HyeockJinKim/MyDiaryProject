@@ -55,34 +55,8 @@ import axios from 'axios'
 export default {
     name: "Edit",
     created() {
-        axios.get('http://127.0.0.1:8000/diary/tags')
-            .then(data => data.data)
-            .then(data => {
-                for (let i = 0; i < data.location.length; ++i) {
-                    this.footer[0].data.push(data.location[i].fields.name)
-                }
-                this.footer[0].selected = data.location[0].fields.name
-                for (let i = 0; i < data.subject.length; ++i) {
-                    this.footer[1].data.push(data.subject[i].fields.name)
-                }
-                this.footer[1].selected = data.subject[0].fields.name
-                for (let i = 0; i < data.with_me.length; ++i) {
-                    this.tags[0].data.push({
-                        name: data.with_me[i].fields.name,
-                        selected: false
-                    })
-                }
-                for (let i = 0; i < data.tags.length; ++i) {
-                    this.tags[1].data.push({
-                        name: data.tags[i].fields.name,
-                        selected: false
-                    })
-                }
-                this.date = data.date
-            })
-            .catch(err => {
-                console.log(err)
-            })
+        this.get_tags()
+        this.get_page()
     },
     data: function () {
         return {
@@ -144,6 +118,70 @@ export default {
                         console.log(err)
                     })
             this.$router.push('/diary/post/')
+        },
+        get_tags: function () {
+            axios.get('http://127.0.0.1:8000/diary/tags')
+                .then(data => data.data)
+                .then(data => {
+                    for (let i = 0; i < data.location.length; ++i) {
+                        this.footer[0].data.push(data.location[i].fields.name)
+                    }
+                    this.footer[0].selected = data.location[0].fields.name
+                    for (let i = 0; i < data.subject.length; ++i) {
+                        this.footer[1].data.push(data.subject[i].fields.name)
+                    }
+                    this.footer[1].selected = data.subject[0].fields.name
+                    for (let i = 0; i < data.with_me.length; ++i) {
+                        this.tags[0].data.push({
+                            name: data.with_me[i].fields.name,
+                            selected: false
+                        })
+                    }
+                    for (let i = 0; i < data.tags.length; ++i) {
+                        this.tags[1].data.push({
+                            name: data.tags[i].fields.name,
+                            selected: false
+                        })
+                    }
+                    this.date = data.date
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        },
+        get_page: function () {
+            let pk = ''
+            this.header = ''
+            this.contents = ''
+
+            if (this.$route.params.id !== undefined) {
+                pk = parseInt(this.$route.params.id)
+                axios.get('http://127.0.0.1:8000/diary/page/' + pk)
+                    .then(data => data.data)
+                    .then(data => {
+                        console.log(data)
+                        this.header = data.title
+                        this.contents = data.post
+                        this.footer[0].selected = data.location
+                        this.footer[1].selected = data.subject
+
+                        for (let i = 0; i < this.tags[0].data.length; ++i) {
+                            if (data.with_me.includes(this.tags[0].data[i].name))
+                                this.tags[0].data[i].selected = true
+                        }
+                        console.log(this.tags)
+                        console.log(data.tags)
+                        for (let i = 0; i < this.tags[1].data.length; ++i) {
+                            if (data.tags.includes(this.tags[1].data[i].name))
+                                this.tags[1].data[i].selected = true
+
+                        }
+                        this.date = data.date
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+            }
         }
     }
 }

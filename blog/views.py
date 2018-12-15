@@ -46,16 +46,18 @@ def tags(request):
 
 
 def page(request, pk=-1):
+    length = Diary.objects.count()
     try:
         diary = Diary.objects.get(pk=pk)
     except:
-        diary = Diary.objects.get(pk=Diary.objects.count())
-
+        diary = Diary.objects.get(pk=length)
     data = json.loads(serializers.serialize('json', [diary, ]))[0]
+    pk = data['pk']
     data = data['fields']
     data['subject'] = Subject.get_name(data['subject'])
     data['location'] = Location.get_name(data['location'])
-
+    data['pk'] = pk
+    data['len'] = length
     for i in range(len(data['with_me'])):
         data['with_me'][i] = WithMe.get_name(data['with_me'][i])
 
@@ -89,4 +91,36 @@ def new(request):
             diary.tags.add(Tag.objects.get(name=tag))
     except:
         return JsonResponse('tag error')
+    return JsonResponse(data)
+
+
+@csrf_exempt
+def edit(request, pk):
+    data = json.loads(request.body.decode('utf-8'))
+    print(data)
+    try:
+        diary = Diary.objects.get(pk=pk)
+    except:
+        return JsonResponse('diary pk error')
+    try:
+        diary.title=data['header']
+        diary.subject=Subject.objects.get(name=data['subject'])
+        diary.post=data['contents']
+        diary.location=Location.objects.get(name=data['location'])
+        diary.date=data['date']
+    except:
+        JsonResponse('data error')
+    try:
+        diary.with_me.clear()
+        for me in data['with_me']:
+            diary.with_me.add(WithMe.objects.get(name=me))
+    except:
+        return JsonResponse('with me error')
+    try:
+        diary.tags.clear()
+        for tag in data['tags']:
+            diary.tags.add(Tag.objects.get(name=tag))
+    except:
+        return JsonResponse('tag error')
+    diary.save()
     return JsonResponse(data)

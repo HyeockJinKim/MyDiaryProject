@@ -7,5 +7,6 @@ urlpatterns = [
     path('new', views.new, name='new'),
     path('page/', views.page, name='page'),
     path('page/<int:pk>', views.page, name='page'),
+    path('edit/<int:pk>', views.page, name='page'),
     path('tags', views.tags, name='tags')
 ]

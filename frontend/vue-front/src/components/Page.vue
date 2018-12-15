@@ -23,15 +23,17 @@
                 <label class="sparse">날짜
                     <span type="date">{{ date }}</span>
                 </label>
-                <div class="flow-right grid-two submit pointer" @click="write">
+                <router-link :to="{ name: 'edit', params: { id: prev+1 } }" class="flow-right grid-two submit pointer">
                     <div>
                         <img src="../assets/32_pen.png" align="left" alt="writing"/>
                     </div>
                     <div>
                         <p>Writing</p>
                     </div>
-                    <h2 class="right-btn" @click="next_page">&gt;</h2>
-                </div>
+                </router-link>
+                <h2 class="right-btn"><router-link :to="next_page">&gt;</router-link></h2>
+                <h2 class="left-btn"><router-link :to="{ name: 'post', params: { id: prev }}">&lt;</router-link></h2>
+
             </div>
         </transition>
     </div>
@@ -43,29 +45,7 @@ import axios from 'axios'
 export default {
     name: "Page",
     created() {
-        let pk = ''
-        if (this.$route.params.id !== undefined)
-            pk = this.$route.params.id
-        axios.get('http://127.0.0.1:8000/diary/page/'+pk)
-            .then(data => data.data)
-            .then(data => {
-                console.log(data)
-                this.header = data.title
-                this.contents = data.post
-                this.tags[0].data.push(data.location)
-                this.tags[1].data.push(data.subject)
-
-                for (let i = 0; i < data.with_me.length; ++i) {
-                    this.tags[2].data.push(data.with_me[i])
-                }
-                for (let i = 0; i < data.tags.length; ++i) {
-                    this.tags[3].data.push(data.tags[i])
-                }
-                this.date = data.date
-            })
-            .catch(err => {
-                console.log(err)
-            })
+        this.fetch_data()
     },
     data: function () {
         return {
@@ -94,15 +74,60 @@ export default {
                 }
             ],
             date: '',
-            show: true
+            base: '/diary/post/',
+            next: -1,
+            prev: -1,
+            show: false,
+            next_page: ''
         }
     },
+    watch: {
+        '$route': 'fetch_data'
+    },
     methods: {
-        next_page: function () {
+        fetch_data: function() {
             this.show = false
-            setTimeout(() => this.show = true, 500)
-        },
-        write: function () {
+            let pk = ''
+            if (this.$route.params.id !== undefined)
+                pk = parseInt(this.$route.params.id)
+            setTimeout(axios.get('http://127.0.0.1:8000/diary/page/'+pk)
+                .then(data => data.data)
+                .then(data => {
+                    console.log(data)
+                    this.header = data.title
+                    this.contents = data.post
+                    this.tags[0].data = []
+                    this.tags[1].data = []
+                    this.tags[2].data = []
+                    this.tags[3].data = []
+                    this.tags[0].data.push(data.location)
+                    this.tags[1].data.push(data.subject)
+
+                    for (let i = 0; i < data.with_me.length; ++i) {
+                        this.tags[2].data.push(data.with_me[i])
+                    }
+                    for (let i = 0; i < data.tags.length; ++i) {
+                        this.tags[3].data.push(data.tags[i])
+                    }
+                    this.date = data.date
+                    if (data.len === data.pk) {
+                        this.next_page = {
+                            name: 'new'
+                        }
+                        console.log('new')
+                    } else {
+                        this.next = data.pk+1
+                        this.next_page = {
+                            name: 'post',
+                            params: { id: this.next }
+                        }
+                    }
+                    this.prev = data.pk-1
+                    this.show = true
+                })
+                .catch(err => {
+                    console.log(err)
+                }), 1500)
 
         }
     }
@@ -111,11 +136,23 @@ export default {
 
 <style scoped>
 
+a {
+    text-decoration: none;
+}
+
 .right-btn {
     position: relative;
-    top: -18em;
-    left: 4.5em;
+    top: -16em;
+    left: 6.5em;
     float: right;
+    cursor: pointer;
+}
+
+.left-btn {
+    position: relative;
+    top: -16em;
+    left: -24em;
+    float: left;
     cursor: pointer;
 }
 
