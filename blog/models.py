@@ -57,4 +57,4 @@ class Diary(models.Model):
     location = models.ForeignKey(Location, null=True, blank=True, on_delete=models.SET_NULL)  # Null: 알 수 없는 장소
     with_me = models.ManyToManyField(WithMe, null=True, blank=True)
     tags = models.ManyToManyField(Tag, null=True, blank=True)
-    date = models.DateField(default=timezone.now)
+    date = models.DateField(default=timezone.localdate)

@@ -16,7 +16,7 @@ from blog.serializers import DiarySerializer
 
 def index(request):
     # my_diary = Diary.objects.order_by('-id')[:5]
-    return render(request, 'blog/index.html', locals())
+    return render(request, 'dist/index.html', locals())
 
 
 class DiaryListCreate(generics.ListCreateAPIView):
@@ -30,7 +30,7 @@ def tags(request):
         'subject': json.loads(serializers.serialize('json', Subject.objects.all())),
         'with_me': json.loads(serializers.serialize('json', WithMe.objects.all())),
         'tags': json.loads(serializers.serialize('json', Tag.objects.all())),
-        'date': timezone.now().date()
+        'date': timezone.localdate()
     }
     return JsonResponse(data)
 
