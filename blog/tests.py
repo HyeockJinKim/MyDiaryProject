@@ -1,9 +1,9 @@
-import datetime
-
 from django.test import TestCase
 
 
 # Create your tests here.
+from django.utils import timezone
+
 from blog.models import Diary, WithMe, Subject, Location
 
 
@@ -32,15 +32,11 @@ class BlogModelTest(TestCase):
     def test_diary(self):
         saved_models = Diary.objects.count()
         self.assertEqual(saved_models, 1)
-        today = datetime.date.today()
+        today = timezone.localdate()
         diary = Diary.objects.filter(
-            created__year=today.year,
-            created__month=today.month,
-            created__day=today.day
+            date=today
         )
 
         self.assertIsNotNone(diary)
         self.assertEqual(diary.count(), 1)
-
-        self.assertEqual(diary[0].created.date(), datetime.datetime.now().date())
-        self.assertLessEqual(diary[0].created.time(), datetime.datetime.now().time())
+        self.assertEqual(diary[0].date, timezone.localdate())
